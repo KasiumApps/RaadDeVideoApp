@@ -8,7 +8,7 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
-import nl.npo.player.sampleApp.databinding.BottomSheetDialogSettingsBinding
+import nl.npo.hackathon.sampleApp.databinding.BottomSheetDialogSettingsBinding
 import nl.npo.player.sampleApp.presentation.ext.supportsCasting
 import nl.npo.player.sampleApp.shared.presentation.viewmodel.SettingsViewModel
 

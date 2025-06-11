@@ -12,7 +12,7 @@ import com.google.android.material.progressindicator.CircularProgressIndicator
 import nl.npo.player.library.domain.exception.NPOOfflineContentException
 import nl.npo.player.library.domain.exception.NPOOfflineErrorCode
 import nl.npo.player.library.domain.offline.models.NPODownloadState
-import nl.npo.player.sampleApp.databinding.ListItemOfflineBinding
+import nl.npo.hackathon.sampleApp.databinding.ListItemOfflineBinding
 import nl.npo.player.sampleApp.shared.extension.observeNonNull
 import nl.npo.player.sampleApp.shared.model.SourceWrapper
 

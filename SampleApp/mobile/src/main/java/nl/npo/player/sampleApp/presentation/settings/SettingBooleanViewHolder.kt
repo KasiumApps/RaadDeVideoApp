@@ -3,7 +3,7 @@ package nl.npo.player.sampleApp.presentation.settings
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import nl.npo.player.sampleApp.databinding.ItemSettingBooleanBinding
+import nl.npo.hackathon.sampleApp.databinding.ItemSettingBooleanBinding
 import nl.npo.player.sampleApp.shared.presentation.settings.model.SettingsItem
 import nl.npo.player.sampleApp.shared.presentation.settings.model.SettingsKey
 import nl.npo.player.sampleApp.shared.presentation.settings.model.SettingsSwitchOption

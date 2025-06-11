@@ -4,9 +4,9 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
 import dagger.hilt.android.AndroidEntryPoint
+import nl.npo.hackathon.sampleApp.R
+import nl.npo.hackathon.sampleApp.databinding.ActivitySelectNpotagTypeBinding
 import nl.npo.player.library.NPOCasting
-import nl.npo.player.sampleApp.R
-import nl.npo.player.sampleApp.databinding.ActivitySelectNpotagTypeBinding
 import nl.npo.player.sampleApp.presentation.cast.CastOptionsProvider
 import nl.npo.player.sampleApp.shared.app.PlayerApplication
 import nl.npo.player.sampleApp.shared.presentation.viewmodel.LibrarySetupViewModel

@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import nl.npo.player.sampleApp.databinding.ListItemMainBinding
+import nl.npo.hackathon.sampleApp.databinding.ListItemMainBinding
 import nl.npo.player.sampleApp.shared.model.SourceWrapper
 
 class MainListItemViewHolder private constructor(

@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.PopupMenu
 import androidx.recyclerview.widget.RecyclerView
-import nl.npo.player.sampleApp.databinding.ItemSettingPickerBinding
+import nl.npo.hackathon.sampleApp.databinding.ItemSettingPickerBinding
 import nl.npo.player.sampleApp.shared.presentation.settings.model.SettingsItem
 import nl.npo.player.sampleApp.shared.presentation.settings.model.SettingsKey
 import nl.npo.player.sampleApp.shared.presentation.settings.model.SettingsPickerOption

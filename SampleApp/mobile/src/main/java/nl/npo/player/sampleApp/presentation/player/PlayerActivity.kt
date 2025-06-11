@@ -21,6 +21,8 @@ import com.google.android.gms.cast.framework.CastContext
 import com.google.android.gms.cast.framework.CastState
 import com.google.android.gms.cast.framework.CastStateListener
 import dagger.hilt.android.AndroidEntryPoint
+import nl.npo.hackathon.sampleApp.R
+import nl.npo.hackathon.sampleApp.databinding.ActivityPlayerBinding
 import nl.npo.player.library.NPOCasting
 import nl.npo.player.library.NPOPlayerLibrary
 import nl.npo.player.library.attachToLifecycle
@@ -44,8 +46,6 @@ import nl.npo.player.library.presentation.notifications.NPONotificationManager
 import nl.npo.player.library.presentation.pip.DefaultNPOPictureInPictureHandler
 import nl.npo.player.library.presentation.pip.NPOPictureInPictureHandler
 import nl.npo.player.library.setupPlayerNotificationManager
-import nl.npo.player.sampleApp.R
-import nl.npo.player.sampleApp.databinding.ActivityPlayerBinding
 import nl.npo.player.sampleApp.presentation.BaseActivity
 import nl.npo.player.sampleApp.presentation.MainActivity
 import nl.npo.player.sampleApp.presentation.ext.isGooglePlayServicesAvailable

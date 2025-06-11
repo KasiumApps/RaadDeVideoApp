@@ -1,8 +1,5 @@
 <network-security-config>
-    <debug-overrides>
-        <trust-anchors>
-            <!-- Trust user added CAs while debuggable only -->
-            <certificates src="user" />
-        </trust-anchors>
-    </debug-overrides>
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">quizclip-156411744834.europe-west4.run.app</domain>
+    </domain-config>
 </network-security-config>

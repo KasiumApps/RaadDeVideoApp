@@ -14,9 +14,9 @@ import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
 import com.google.android.gms.cast.framework.CastButtonFactory
 import dagger.hilt.android.AndroidEntryPoint
+import nl.npo.hackathon.sampleApp.R
+import nl.npo.hackathon.sampleApp.databinding.ActivityMainBinding
 import nl.npo.player.library.NPOCasting
-import nl.npo.player.sampleApp.R
-import nl.npo.player.sampleApp.databinding.ActivityMainBinding
 import nl.npo.player.sampleApp.presentation.ext.isGooglePlayServicesAvailable
 import nl.npo.player.sampleApp.presentation.list.MainListAdapter
 import nl.npo.player.sampleApp.presentation.offline.OfflineActivity

@@ -9,7 +9,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import nl.npo.player.library.NPOCasting
 import nl.npo.player.library.domain.offline.NPOOfflineContentManager
 import nl.npo.player.library.domain.offline.models.NPODownloadState
-import nl.npo.player.sampleApp.databinding.ActivityOfflineBinding
+import nl.npo.hackathon.sampleApp.databinding.ActivityOfflineBinding
 import nl.npo.player.sampleApp.presentation.BaseActivity
 import nl.npo.player.sampleApp.presentation.player.PlayerActivity
 import nl.npo.player.sampleApp.shared.extension.observeNonNull
