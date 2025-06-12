@@ -12,6 +12,7 @@
     <string name="manual_prid_hint">Manual PRID</string>
     <string name="welcome_text">Vul je naam in en start het spel:</string>
     <string name="name_hint">Naam</string>
+    <string name="name_not_entered">Een naam is verplicht!</string>
     <string name="start_btn">Start</string>
     <string name="restart_btn">Herstart spel</string>
     <string name="segment_hint">Bekijk hint</string>
