@@ -33,8 +33,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import dagger.hilt.android.AndroidEntryPoint
 import nl.npo.hackathon.sampleApp.R
 import nl.npo.player.library.NPOPlayerLibrary
@@ -71,6 +73,13 @@ class GameActivity : BaseActivity() {
             MaterialTheme {
                 GameView(gameState)
             }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (gameModel.gameState.value.npoSourceConfig != null) {
+            player?.play()
         }
     }
 
@@ -201,7 +210,7 @@ class GameActivity : BaseActivity() {
         val text =
             stringResource(if (correct) R.string.result_correct else R.string.result_incorrect)
         val color = if (correct) Color.Green else Color.Red
-        Text(text = text, color = color)
+        Text(text = text, color = color, fontWeight = FontWeight.Bold, fontSize = 20.sp)
     }
 
     @Composable
@@ -346,6 +355,8 @@ class GameActivity : BaseActivity() {
         ) {
             Text(
                 text = question.question,
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold,
                 modifier = Modifier.fillMaxWidth(),
             )
 

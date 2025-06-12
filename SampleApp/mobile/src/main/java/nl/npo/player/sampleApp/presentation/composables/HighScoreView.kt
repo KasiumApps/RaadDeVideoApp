@@ -13,7 +13,9 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import nl.npo.hackathon.sampleApp.R
 import nl.npo.player.sampleApp.shared.data.model.hackathon.HighScore
 
 @Composable
@@ -29,9 +31,15 @@ fun HighScoreView(highScore: HighScore) {
     LazyColumn(Modifier.fillMaxSize().padding(16.dp)) {
         // Here is the header
         item {
-            Row(Modifier.background(Color.Gray)) {
-                TableCell(text = "Naam", weight = column1Weight)
-                TableCell(text = "Score", weight = column2Weight)
+            Row(Modifier.background(Color(0xEEF56A00))) {
+                TableCell(
+                    text = stringResource(R.string.high_score_table_name),
+                    weight = column1Weight,
+                )
+                TableCell(
+                    text = stringResource(R.string.high_score_table_score),
+                    weight = column2Weight,
+                )
             }
         }
         // Here are all the lines of your table.
