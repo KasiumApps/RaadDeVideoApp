@@ -1,10 +1,10 @@
-# NPO Player library Sample Application for Android
+# ClipQuiz
 
-## SampleApp:
+## App:
 
-To get the sample app to run and play videos make sure to add you Bitmovin player license key,
-NPOTag cloud package key and NPO Player Token signing configuration (Store file for signing release
-builds is optional to fill in) to your [local.properties](/local.properties) file. Add the following
+To get the app to run and play videos make sure to add you Bitmovin player license key, NPOTag cloud
+package key and NPO Player Token signing configuration (Store file for signing release builds is
+optional to fill in) to your [local.properties](/local.properties) file. Add the following
 properties with the correct values:
 
 ```text
@@ -21,6 +21,7 @@ token_signature_start_acc=
 token_signature_plus_acc=
 token_signature_start_prod=
 token_signature_plus_prod=
+token_game_auth=
 # The following settings need to be set, but can remain empty if you don't want to create release builds.
 storeFile=
 storePassword=
