@@ -3,6 +3,7 @@ package nl.npo.player.sampleApp.shared.domain.hackathon
 import nl.npo.player.sampleApp.shared.data.model.hackathon.AnswerQuestionResponse
 import nl.npo.player.sampleApp.shared.data.model.hackathon.GameScore
 import nl.npo.player.sampleApp.shared.data.model.hackathon.GameStartResponse
+import nl.npo.player.sampleApp.shared.data.model.hackathon.HighScore
 import nl.npo.player.sampleApp.shared.data.model.hackathon.Question
 import nl.npo.player.sampleApp.shared.data.model.hackathon.Segment
 
@@ -27,4 +28,6 @@ interface GameRepository {
     ): AnswerQuestionResponse
 
     suspend fun getScore(gameId: String): GameScore
+
+    suspend fun getHighScore(): HighScore
 }

@@ -5,6 +5,7 @@ import nl.npo.player.sampleApp.shared.data.model.hackathon.AnswerQuestionRespons
 import nl.npo.player.sampleApp.shared.data.model.hackathon.GameScore
 import nl.npo.player.sampleApp.shared.data.model.hackathon.GameStartRequest
 import nl.npo.player.sampleApp.shared.data.model.hackathon.GameStartResponse
+import nl.npo.player.sampleApp.shared.data.model.hackathon.HighScore
 import nl.npo.player.sampleApp.shared.data.model.hackathon.Question
 import nl.npo.player.sampleApp.shared.data.model.hackathon.Segment
 import retrofit2.http.Body
@@ -26,7 +27,6 @@ internal interface GameApi {
 
     @Headers(
         "Accept: */*",
-        "Content-Type: application/json",
         "Accept-Encoding: gzip, deflate, br",
     )
     @GET("/game/question")
@@ -37,7 +37,6 @@ internal interface GameApi {
 
     @Headers(
         "Accept: */*",
-        "Content-Type: application/json",
         "Accept-Encoding: gzip, deflate, br",
     )
     @GET("/game/question/segment")
@@ -61,11 +60,17 @@ internal interface GameApi {
 
     @Headers(
         "Accept: */*",
-        "Content-Type: application/json",
         "Accept-Encoding: gzip, deflate, br",
     )
-    @GET("/game/score\n")
+    @GET("/game/score")
     suspend fun getScore(
         @Query("game") gameId: String,
     ): GameScore
+
+    @Headers(
+        "Accept: */*",
+        "Accept-Encoding: gzip, deflate, br",
+    )
+    @GET("/game/high-score")
+    suspend fun getHighScore(): HighScore
 }

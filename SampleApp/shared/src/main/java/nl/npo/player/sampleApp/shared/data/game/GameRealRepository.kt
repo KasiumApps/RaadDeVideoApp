@@ -5,6 +5,7 @@ import nl.npo.player.sampleApp.shared.data.model.hackathon.AnswerQuestionRespons
 import nl.npo.player.sampleApp.shared.data.model.hackathon.GameScore
 import nl.npo.player.sampleApp.shared.data.model.hackathon.GameStartRequest
 import nl.npo.player.sampleApp.shared.data.model.hackathon.GameStartResponse
+import nl.npo.player.sampleApp.shared.data.model.hackathon.HighScore
 import nl.npo.player.sampleApp.shared.data.model.hackathon.Question
 import nl.npo.player.sampleApp.shared.data.model.hackathon.Segment
 import nl.npo.player.sampleApp.shared.domain.hackathon.GameRepository
@@ -23,7 +24,7 @@ internal class GameRealRepository
         override suspend fun getQuestion(
             gameId: String,
             questionId: String,
-        ): Question = gameApi.getQuestion(gameId = gameId, questionId = questionId) // .copy(prid = "AT_2160754")
+        ): Question = gameApi.getQuestion(gameId = gameId, questionId = questionId)
 
         override suspend fun getSegment(
             gameId: String,
@@ -43,4 +44,6 @@ internal class GameRealRepository
             )
 
         override suspend fun getScore(gameId: String): GameScore = gameApi.getScore(gameId = gameId)
+
+        override suspend fun getHighScore(): HighScore = gameApi.getHighScore()
     }

@@ -36,7 +36,7 @@ class GameViewModel
         val gameState: StateFlow<GameState> = _gameState.asStateFlow()
 
         fun resetGame() {
-            updateGameState { GameState() }
+            updateGameState { GameState(name = name) }
         }
 
         fun loadStream(
@@ -97,8 +97,9 @@ class GameViewModel
                     delay(1500)
 
                     if (answerQuestionResponse.nextQuestionId == null) {
+                        val highScore = gameRepository.getHighScore()
                         updateGameState {
-                            copy(progressState = ProgressState.GameEnded)
+                            copy(progressState = ProgressState.GameEnded, npoSourceConfig = endConfig, highScore = highScore)
                         }
                     } else {
                         updateGameState {
@@ -254,5 +255,17 @@ class GameViewModel
         private fun updateGameState(block: GameState.() -> GameState) {
             val currentState = _gameState.value
             _gameState.value = currentState.block()
+        }
+
+        companion object {
+            private val endConfig =
+                object : NPOSourceConfig {
+                    override val streamUrl = "https://npo.nl/videos/NPO_De%2BPlek_Flight%2B2_General_90s_Online_16x9.mp4"
+                    override val uniqueId = "NPO_De%2BPlek_Flight%2B2_General_90s_Online"
+                    override val autoPlay = true
+                    override val segment =
+                        nl.npo.player.library.domain.streamLink.model
+                            .Segment("id", 1, 89)
+                }
         }
     }
