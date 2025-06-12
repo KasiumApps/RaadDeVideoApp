@@ -14,9 +14,14 @@ interface GameRepository {
         questionId: String,
     ): Question
 
-    suspend fun getSegment(segmentId: String): Segment
+    suspend fun getSegment(
+        gameId: String,
+        questionId: String,
+        segmentId: String,
+    ): Segment
 
     suspend fun answerQuestion(
+        gameId: String,
         questionId: String,
         answerId: String,
     ): AnswerQuestionResponse

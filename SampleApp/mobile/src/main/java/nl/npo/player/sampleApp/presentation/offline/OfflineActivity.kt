@@ -6,10 +6,10 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import dagger.hilt.android.AndroidEntryPoint
+import nl.npo.hackathon.sampleApp.databinding.ActivityOfflineBinding
 import nl.npo.player.library.NPOCasting
 import nl.npo.player.library.domain.offline.NPOOfflineContentManager
 import nl.npo.player.library.domain.offline.models.NPODownloadState
-import nl.npo.hackathon.sampleApp.databinding.ActivityOfflineBinding
 import nl.npo.player.sampleApp.presentation.BaseActivity
 import nl.npo.player.sampleApp.presentation.player.PlayerActivity
 import nl.npo.player.sampleApp.shared.extension.observeNonNull
@@ -69,12 +69,15 @@ class OfflineActivity : BaseActivity() {
                         ),
                     )
                 }
+
                 is NPODownloadState.Failed, is NPODownloadState.Paused -> {
                     offlineContent.startOrResumeDownload()
                 }
+
                 is NPODownloadState.InProgress -> {
                     offlineContent.pause()
                 }
+
                 is NPODownloadState.Deleting, NPODownloadState.Initializing -> {
                     // NO_OP
                 }

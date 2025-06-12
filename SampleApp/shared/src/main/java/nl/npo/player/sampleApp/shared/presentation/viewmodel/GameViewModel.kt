@@ -1,5 +1,6 @@
 package nl.npo.player.sampleApp.shared.presentation.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -52,9 +53,12 @@ class GameViewModel
         fun startGame(name: String) {
             viewModelScope.launch {
                 tryCatch {
+                    updateGameState {
+                        GameState(progressState = ProgressState.Loading)
+                    }
                     val startResponse = gameRepository.createGame(name)
                     updateGameState {
-                        GameState(
+                        copy(
                             name = name,
                             progressState = ProgressState.Loading,
                             gameStartResponse = startResponse,
@@ -71,13 +75,21 @@ class GameViewModel
         ) {
             viewModelScope.launch {
                 tryCatch {
+                    val gameId =
+                        _gameState.value.gameStartResponse?.gameId
+                            ?: throw IllegalStateException("No start response when trying to retrieve question")
                     updateGameState {
                         copy(
                             progressState = ProgressState.Loading,
+                            npoSourceConfig = null,
                         )
                     }
                     val answerQuestionResponse =
-                        gameRepository.answerQuestion(question.questionId, answerId = answerOption.id)
+                        gameRepository.answerQuestion(
+                            gameId = gameId,
+                            questionId = question.questionId,
+                            answerId = answerOption.id,
+                        )
                     updateScore()
                     updateGameState {
                         copy(progressState = ProgressState.AnswerResult(answerQuestionResponse.correct))
@@ -101,9 +113,35 @@ class GameViewModel
         }
 
         fun getNextSegment(segment: Segment) {
-            getSegment(segmentId = segment.nextSegmentId)
-            updateGameState {
-                copy(progressState = ProgressState.AnswerQuestion)
+            viewModelScope.launch {
+                val currentState = _gameState.value
+                tryCatch {
+                    val questionId =
+                        currentState.question?.questionId
+                            ?: throw IllegalStateException("No question when trying to retrieve segment")
+                    val nextSegmentId =
+                        segment.nextSegmentId
+                            ?: throw IllegalStateException("No question when trying to retrieve segment")
+                    val gameId =
+                        currentState.gameStartResponse?.gameId
+                            ?: throw IllegalStateException("No start response when trying to retrieve segment")
+                    val currentSourceConfig =
+                        currentState.npoSourceConfig
+                            ?: throw IllegalStateException("No source config when trying to retrieve new segment/hint")
+                    updateGameState {
+                        copy(progressState = ProgressState.Loading)
+                    }
+                    val newSegment = getSegment(gameId, questionId, segmentId = nextSegmentId)
+
+                    Log.d("SampleAppTest", "GetNextSegment new segment: $newSegment")
+                    updateGameState {
+                        copy(
+                            progressState = ProgressState.AnswerQuestion,
+                            segment = newSegment,
+                            npoSourceConfig = currentSourceConfig.copy(overrideSegment = newSegment?.toSegment()),
+                        )
+                    }
+                }
             }
         }
 
@@ -117,11 +155,11 @@ class GameViewModel
         private fun getQuestion(questionId: String?) {
             viewModelScope.launch {
                 val currentState = _gameState.value
-                val startResponse =
-                    currentState.gameStartResponse
-                        ?: throw IllegalStateException("No start response when trying to retrieve question")
 
                 tryCatch {
+                    val startResponse =
+                        currentState.gameStartResponse
+                            ?: throw IllegalStateException("No start response when trying to retrieve question")
                     updateGameState {
                         copy(
                             progressState = ProgressState.Loading,
@@ -134,9 +172,9 @@ class GameViewModel
                                 ?: startResponse.startQuestionId,
                         )
 
-                    var sourceConfig = fetchAndMergeSource(question.prid)
-                    getSegment(question.firstSegmentId)
-                    sourceConfig = sourceConfig.copy(overrideSegment = _gameState.value.segment?.toSegment())
+                    val segment = getSegment(startResponse.gameId, question.questionId, question.firstSegmentId)
+
+                    val sourceConfig = fetchAndMergeSource(question.prid, segment)
                     updateGameState {
                         copy(
                             question = question,
@@ -148,9 +186,14 @@ class GameViewModel
             }
         }
 
-        private suspend fun fetchAndMergeSource(prid: String): NPOSourceConfig {
+        private suspend fun fetchAndMergeSource(
+            prid: String,
+            segment: Segment?,
+        ): NPOSourceConfig {
             val token = getToken(prid)
-            return NPOPlayerLibrary.StreamLink.getNPOSourceConfig(JWTString(token))
+            return NPOPlayerLibrary.StreamLink
+                .getNPOSourceConfig(JWTString(token))
+                .copy(overrideAutoPlay = true, overrideSegment = segment?.toSegment())
         }
 
         private suspend fun getToken(prid: String): String =
@@ -161,19 +204,22 @@ class GameViewModel
                 }
             }
 
-        private fun getSegment(segmentId: String) {
-            viewModelScope.launch {
+        private suspend fun getSegment(
+            gameId: String,
+            questionId: String,
+            segmentId: String,
+        ): Segment? {
+            updateGameState {
+                copy(
+                    progressState = ProgressState.Loading,
+                )
+            }
+            return tryCatch {
+                val segment = gameRepository.getSegment(gameId, questionId, segmentId)
                 updateGameState {
-                    copy(
-                        progressState = ProgressState.Loading,
-                    )
+                    copy(segment = segment)
                 }
-                tryCatch {
-                    val segment = gameRepository.getSegment(segmentId)
-                    updateGameState {
-                        copy(segment = segment)
-                    }
-                }
+                return@tryCatch segment
             }
         }
 

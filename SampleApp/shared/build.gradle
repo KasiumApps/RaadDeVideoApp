@@ -37,6 +37,8 @@ android {
 
         buildConfigField "String", "TOKEN_SIGNATURE_START_PROD", "\"${localProperties.token_signature_start_prod}\""
         buildConfigField "String", "TOKEN_SIGNATURE_PLUS_PROD", "\"${localProperties.token_signature_plus_prod}\""
+
+        buildConfigField "String", "TOKEN_GAME_API_AUTH", "\"${localProperties.token_game_auth}\""
     }
 
     buildTypes {

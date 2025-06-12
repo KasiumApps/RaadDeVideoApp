@@ -1,6 +1,6 @@
 package nl.npo.player.sampleApp.shared.data.game
 
-import nl.npo.player.sampleApp.shared.data.model.hackathon.AnswerOption
+import nl.npo.player.sampleApp.shared.data.model.hackathon.AnswerQuestionRequest
 import nl.npo.player.sampleApp.shared.data.model.hackathon.AnswerQuestionResponse
 import nl.npo.player.sampleApp.shared.data.model.hackathon.GameScore
 import nl.npo.player.sampleApp.shared.data.model.hackathon.GameStartRequest
@@ -17,43 +17,30 @@ internal class GameRealRepository
     constructor(
         val gameApi: GameApi,
     ) : GameRepository {
-        private val correctAnswerId = "id2"
-        private var score = 0
-
         override suspend fun createGame(name: String): GameStartResponse =
             gameApi.startGame(gameStartRequest = GameStartRequest(name = name))
 
         override suspend fun getQuestion(
             gameId: String,
             questionId: String,
-        ): Question =
-            Question(
-                questionId = "qId",
-                prid = "AT_2160754",
-                question = "Hoe heet de zanger(-es) om wie het draait in deze aflevering?",
-                answerOptions =
-                    listOf(
-                        AnswerOption("id1", "FakeAnswer$score"),
-                        AnswerOption(correctAnswerId, "Karsu"),
-                        AnswerOption("id3", "FakeAnswer${score + 2}"),
-                    ),
-                firstSegmentId = "seg1",
-            )
+        ): Question = gameApi.getQuestion(gameId = gameId, questionId = questionId) // .copy(prid = "AT_2160754")
 
-        override suspend fun getSegment(segmentId: String): Segment =
-            Segment(segmentId = segmentId, startTime = 300, endTime = 310, nextSegmentId = "seg2")
+        override suspend fun getSegment(
+            gameId: String,
+            questionId: String,
+            segmentId: String,
+        ): Segment = gameApi.getSegment(gameId = gameId, questionId = questionId, segmentId = segmentId)
 
         override suspend fun answerQuestion(
+            gameId: String,
             questionId: String,
             answerId: String,
-        ): AnswerQuestionResponse {
-            val correct = answerId == correctAnswerId
-            if (correct) score++
-            return AnswerQuestionResponse(
-                correct = correct,
-                nextQuestionId = if (score < 2) "bla" else null,
+        ): AnswerQuestionResponse =
+            gameApi.sendAnswer(
+                gameId = gameId,
+                questionId = questionId,
+                answerBody = AnswerQuestionRequest(questionId, answerId),
             )
-        }
 
-        override suspend fun getScore(gameId: String): GameScore = GameScore(score = score)
+        override suspend fun getScore(gameId: String): GameScore = gameApi.getScore(gameId = gameId)
     }

@@ -31,7 +31,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
 import dagger.hilt.android.AndroidEntryPoint
 import nl.npo.hackathon.sampleApp.R
 import nl.npo.player.library.NPOPlayerLibrary
@@ -39,13 +38,11 @@ import nl.npo.player.library.attachToLifecycle
 import nl.npo.player.library.domain.analytics.model.PageConfiguration
 import nl.npo.player.library.domain.exception.NPOPlayerException
 import nl.npo.player.library.domain.player.NPOPlayer
-import nl.npo.player.library.domain.player.ui.model.NPOPlayerColors
 import nl.npo.player.library.npotag.PlayerTagProvider
-import nl.npo.player.library.presentation.mobile.view.NPOVideoPlayerView
+import nl.npo.player.library.presentation.compose.PlayerSurface
 import nl.npo.player.library.presentation.model.NPOPlayerConfig
 import nl.npo.player.sampleApp.shared.data.model.hackathon.AnswerOption
 import nl.npo.player.sampleApp.shared.data.model.hackathon.Question
-import nl.npo.player.sampleApp.shared.data.model.hackathon.Segment
 import nl.npo.player.sampleApp.shared.presentation.game.GameState
 import nl.npo.player.sampleApp.shared.presentation.game.ProgressState
 import nl.npo.player.sampleApp.shared.presentation.viewmodel.GameViewModel
@@ -83,6 +80,7 @@ class GameActivity : BaseActivity() {
                                     PageConfiguration("Quiz"),
                                 ),
                     ).apply {
+                        isAutoPlayEnabled = true
                         remoteControlMediaInfoCallback = PlayerViewModel.remoteCallback
                         attachToLifecycle(lifecycle)
                     }
@@ -103,7 +101,8 @@ class GameActivity : BaseActivity() {
     @Composable
     fun GameView(gameState: GameState) {
         LaunchedEffect(gameState.npoSourceConfig) {
-            Log.d("SampleAppTest", "Source config updated: $gameState.npoSourceConfig")
+            Log.d("SampleAppTest", "Source config updated: ${gameState.npoSourceConfig}")
+            Log.d("SampleAppTest", "Source config segment: ${gameState.npoSourceConfig?.segment}")
             val currentSource = gameState.npoSourceConfig
             if (currentSource != null) {
                 player?.let {
@@ -126,20 +125,23 @@ class GameActivity : BaseActivity() {
                 HorizontalDivider(thickness = 2.dp)
             }
 
-            when (gameState.progressState) {
+            when (val progressState = gameState.progressState) {
                 ProgressState.AnswerQuestion -> {
                     val question = gameState.question
                     val segment = gameState.segment
                     if (question != null && segment != null && player != null) {
                         QuestionView(
                             npoPlayer = player!!,
-                            segment = segment,
                             question = question,
-                            { answerOption ->
+                            onAnswer = { answerOption ->
                                 gameModel.answerQuestion(
                                     question = question,
                                     answerOption = answerOption,
                                 )
+                            },
+                            hintAvailable = segment.hasMoreSegments,
+                            onHint = {
+                                gameModel.getNextSegment(segment)
                             },
                         )
                     } else {
@@ -148,17 +150,13 @@ class GameActivity : BaseActivity() {
                 }
 
                 is ProgressState.Error -> {
-                    Text(
-                        text =
-                            (gameState.progressState as? ProgressState.Error)?.errorMessage
-                                ?: "",
-                    )
+                    ErrorView(errorState = progressState) { gameModel.resetGame() }
                 }
 
                 ProgressState.GameEnded -> {
-                    EndView(name = gameState.name ?: "", score = gameState.score.score, {
+                    EndView(name = gameState.name ?: "", score = gameState.score.score) {
                         gameModel.resetGame()
-                    })
+                    }
                 }
 
                 ProgressState.Init -> {
@@ -173,7 +171,7 @@ class GameActivity : BaseActivity() {
                     )
                 }
 
-                is ProgressState.AnswerResult -> AnswerResultView(correct = (gameState.progressState as ProgressState.AnswerResult).correct)
+                is ProgressState.AnswerResult -> AnswerResultView(correct = progressState.correct)
             }
         }
     }
@@ -219,6 +217,25 @@ class GameActivity : BaseActivity() {
     }
 
     @Composable
+    fun ErrorView(
+        errorState: ProgressState.Error,
+        restart: () -> Unit,
+    ) {
+        Column {
+            Text(
+                text = errorState.errorMessage ?: "",
+            )
+            Button(onClick = {
+                restart.invoke()
+            }) {
+                Text(
+                    stringResource(R.string.restart_btn),
+                )
+            }
+        }
+    }
+
+    @Composable
     fun StartGameView(
         startGame: (String) -> Unit,
         modifier: Modifier = Modifier,
@@ -241,19 +258,21 @@ class GameActivity : BaseActivity() {
             modifier = modifier,
             verticalArrangement = Arrangement.SpaceAround,
         ) {
-            Text(
-                text = stringResource(R.string.welcome_text),
-                modifier = Modifier.fillMaxWidth(),
-            )
-            OutlinedTextField(
-                state = editTextState,
-                label = { Text(text = stringResource(R.string.name_hint)) },
-                modifier = Modifier.fillMaxWidth(),
-                lineLimits = TextFieldLineLimits.SingleLine,
-                onKeyboardAction = {
-                    onButtonClick.invoke()
-                },
-            )
+            Column {
+                Text(
+                    text = stringResource(R.string.welcome_text),
+                    modifier = Modifier.fillMaxWidth(),
+                )
+                OutlinedTextField(
+                    state = editTextState,
+                    label = { Text(text = stringResource(R.string.name_hint)) },
+                    modifier = Modifier.fillMaxWidth(),
+                    lineLimits = TextFieldLineLimits.SingleLine,
+                    onKeyboardAction = {
+                        onButtonClick.invoke()
+                    },
+                )
+            }
             Button(
                 onClick = onButtonClick,
                 modifier = Modifier.fillMaxWidth(),
@@ -266,9 +285,10 @@ class GameActivity : BaseActivity() {
     @Composable
     fun QuestionView(
         npoPlayer: NPOPlayer,
-        segment: Segment,
         question: Question,
         onAnswer: (AnswerOption) -> Unit,
+        hintAvailable: Boolean,
+        onHint: () -> Unit,
         modifier: Modifier = Modifier,
     ) {
         Column(
@@ -280,20 +300,10 @@ class GameActivity : BaseActivity() {
                 modifier = Modifier.fillMaxWidth(),
             )
 
-            AndroidView(
-                factory =
-                    { context ->
-                        NPOVideoPlayerView(context).apply {
-                            attachPlayer(
-                                npoPlayer = npoPlayer,
-                                npoPlayerColors = NPOPlayerColors(),
-                            )
-                            setFullScreenHandler(null)
-                        }
-                    },
-                onRelease = {
-                    npoPlayer.unload()
-                },
+            PlayerSurface(
+                player = npoPlayer,
+                canShowAds = false,
+                showAscii = false,
                 modifier =
                     Modifier
                         .fillMaxWidth()
@@ -313,6 +323,12 @@ class GameActivity : BaseActivity() {
                         Text(answer.text)
                     }
                 }
+            }
+            if (hintAvailable) {
+                Button(
+                    onClick = onHint,
+                    modifier = Modifier.fillMaxWidth(),
+                ) { Text(stringResource(R.string.segment_hint)) }
             }
         }
     }

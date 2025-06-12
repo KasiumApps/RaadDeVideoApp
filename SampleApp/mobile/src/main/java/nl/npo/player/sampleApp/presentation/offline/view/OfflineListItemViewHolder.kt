@@ -9,10 +9,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.asLiveData
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.progressindicator.CircularProgressIndicator
+import nl.npo.hackathon.sampleApp.databinding.ListItemOfflineBinding
 import nl.npo.player.library.domain.exception.NPOOfflineContentException
 import nl.npo.player.library.domain.exception.NPOOfflineErrorCode
 import nl.npo.player.library.domain.offline.models.NPODownloadState
-import nl.npo.hackathon.sampleApp.databinding.ListItemOfflineBinding
 import nl.npo.player.sampleApp.shared.extension.observeNonNull
 import nl.npo.player.sampleApp.shared.model.SourceWrapper
 

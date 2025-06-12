@@ -4,7 +4,8 @@ data class Segment(
     val segmentId: String,
     val startTime: Int,
     val endTime: Int,
-    val nextSegmentId: String,
+    val nextSegmentId: String?,
+    val hasMoreSegments: Boolean,
 )
 
 fun Segment.toSegment(): nl.npo.player.library.domain.streamLink.model.Segment =
@@ -12,5 +13,4 @@ fun Segment.toSegment(): nl.npo.player.library.domain.streamLink.model.Segment =
         segmentId,
         startTime,
         endTime,
-        nextSegmentId,
     )
